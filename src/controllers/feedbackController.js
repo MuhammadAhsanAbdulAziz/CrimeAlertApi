@@ -64,9 +64,20 @@ const getFeedback = async (req, res) => {
     }
 };
 
+const getallFeedback = async (req, res) => {
+    try {
+        var [feedbacks] = await pool.query(`SELECT * FROM tbl_feedback`);
+        res.status(200).json(feedbacks);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+};
+
 module.exports = {
     createFeedback,
     updateFeedback,
     deleteFeedback,
-    getFeedback
+    getFeedback,
+    getallFeedback
 };
