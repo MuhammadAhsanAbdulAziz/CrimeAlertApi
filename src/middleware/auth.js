@@ -13,6 +13,7 @@ const auth = (req, res, next)=>{
             let user = jwt.verify(token,SECRET_KEY)
             req.userId = user.id;
             req.userRole = user.RoleId;
+            req.userName = user.fname + " " + user.lname
         }
         else{
             return res.status(401).json({message : "Unauthorized User"})

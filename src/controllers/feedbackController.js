@@ -10,10 +10,10 @@ const pool = mysql.createPool({
 }).promise()
 
 const createFeedback = async (req, res) => {
-    const { FeedbackDescription} = req.body;
+    const { FeedbackDescription,FeedbackRating} = req.body;
 
-    const [newFeedback] = await pool.query(`INSERT INTO tbl_feedback (FeedbackDescription,CreatedBy) 
-        VALUES(?, ?)`, [FeedbackDescription, req.userId])
+    const [newFeedback] = await pool.query(`INSERT INTO tbl_feedback (FeedbackDescription,FeedbackRating,CreatedBy) 
+        VALUES(?, ?,?)`, [FeedbackDescription,FeedbackRating, req.userId])
     var [feedback] = await pool.query(`SELECT * FROM tbl_feedback WHERE FeedbackId = ?`, [newFeedback.insertId])
     feedback = feedback[0]
     try {
@@ -23,6 +23,22 @@ const createFeedback = async (req, res) => {
         res.status(500).json({ message: "Something went wrong" });
     }
 };
+
+const createFeedbackAnonymous = async (req, res) => {
+    const { FeedbackDescription,FeedbackRating} = req.body;
+
+    const [newFeedback] = await pool.query(`INSERT INTO tbl_feedback (FeedbackDescription,FeedbackRating) 
+        VALUES(?, ?)`, [FeedbackDescription,FeedbackRating])
+    var [feedback] = await pool.query(`SELECT * FROM tbl_feedback WHERE FeedbackId = ?`, [newFeedback.insertId])
+    feedback = feedback[0]
+    try {
+        res.status(201).send(feedback);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+};
+
 
 const updateFeedback = async (req, res) => {
     const id = req.params.id;
@@ -79,5 +95,6 @@ module.exports = {
     updateFeedback,
     deleteFeedback,
     getFeedback,
-    getallFeedback
+    getallFeedback,
+    createFeedbackAnonymous
 };

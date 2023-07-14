@@ -5,6 +5,7 @@ const app = express()
 const dotenv = require("dotenv");
 const feedbackRouter = require("./routes/feedbackRoute");
 const complaintRouter = require("./routes/ComplaintRoute");
+const emergencycomplaintRouter = require("./routes/EmergencyComplaintRoute");
 dotenv.config();
 
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use("/users",userRouter);
 app.use("/feedbacks",feedbackRouter);
 app.use("/complaints",complaintRouter);
+app.use("/emergencycomplaints",emergencycomplaintRouter);
 
 app.get("/",(req,res)=>{
     res.send("CrimeAlert Api from Muhammad Ahsan");
