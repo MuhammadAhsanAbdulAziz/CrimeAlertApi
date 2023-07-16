@@ -1,6 +1,6 @@
 const express = require("express");
 const { getComplaint, createComplaint, deleteComplaint, updateComplaint,getallComplaint,getPendingComplaint,
-    getCompletedComplaint } = require("../controllers/ComplaintController");
+    getCompletedComplaint,updateStatusComplaint } = require("../controllers/ComplaintController");
 const auth = require("../middleware/auth");
 const ComplaintRouter = express.Router();
 
@@ -17,5 +17,7 @@ ComplaintRouter.post("/",auth, createComplaint);
 ComplaintRouter.delete("/:id",auth, deleteComplaint);
 
 ComplaintRouter.put("/:id",auth, updateComplaint);
+
+ComplaintRouter.put("/status/:id",auth, updateStatusComplaint);
 
 module.exports = ComplaintRouter;

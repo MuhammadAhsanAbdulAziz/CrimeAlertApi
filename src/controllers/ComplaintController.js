@@ -43,6 +43,24 @@ const updateComplaint = async (req, res) => {
 
 };
 
+const updateStatusComplaint = async (req, res) => {
+    const id = req.params.id;
+    const { CompStatus} = req.body;
+
+    try {
+        await pool.query(`UPDATE tbl_complaint SET CompStatus = ? where CompId = ?`,
+        [CompStatus,id])
+        var [Complaint] = await pool.query(`SELECT * FROM tbl_complaint WHERE CompId = ?`, [id])
+        Complaint = Complaint[0]
+        res.status(200).json(Complaint);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+
+};
+
 const deleteComplaint = async (req, res) => {
     const id = req.params.id;
 
@@ -104,5 +122,6 @@ module.exports = {
     getComplaint,
     getallComplaint,
     getPendingComplaint,
-    getCompletedComplaint
+    getCompletedComplaint,
+    updateStatusComplaint
 };

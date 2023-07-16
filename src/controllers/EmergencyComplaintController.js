@@ -30,9 +30,27 @@ const updateComplaint = async (req, res) => {
     const { CompTitle , CompDescription, CompStatus} = req.body;
 
     try {
-        await pool.query(`UPDATE tbl_emergencycomplaint SET ECompTitle = ? , ECompDescription = ?,ECompStatus = ?,  CreatedBy = ?,  where CompId = ?`, 
-            [CompTitle,CompDescription,CompStatus, req.userId, id])
-        var [Complaint] = await pool.query(`SELECT * FROM tbl_complaint WHERE CompId = ?`, [id])
+        await pool.query(`UPDATE tbl_emergencycomplaint SET ECompTitle = ? , ECompDescription = ?,ECompStatus = ?,  where ECompId = ?`, 
+            [CompTitle,CompDescription,CompStatus, id])
+        var [Complaint] = await pool.query(`SELECT * FROM tbl_emergencycomplaint WHERE ECompId = ?`, [id])
+        Complaint = Complaint[0]
+        res.status(200).json(Complaint);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+
+};
+
+const updateStatusComplaint = async (req, res) => {
+    const id = req.params.id;
+    const { ECompStatus} = req.body;
+
+    try {
+        await pool.query(`UPDATE tbl_emergencycomplaint SET ECompStatus = ? where ECompId = ?`, 
+            [ECompStatus, id])
+        var [Complaint] = await pool.query(`SELECT * FROM tbl_emergencycomplaint WHERE ECompId = ?`, [id])
         Complaint = Complaint[0]
         res.status(200).json(Complaint);
 
@@ -56,36 +74,6 @@ const deleteComplaint = async (req, res) => {
 
 };
 
-const getComplaint = async (req, res) => {
-    try {
-        var [Complaint] = await pool.query(`SELECT * FROM tbl_complaint where CreatedBy = ?`, [req.userId]);
-        res.status(200).json(Complaint);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Something went wrong" });
-    }
-};
-
-const getPendingComplaint = async (req, res) => {
-    try {
-        var [Complaint] = await pool.query(`SELECT * FROM tbl_complaint where CreatedBy = ${req.userId} AND CompStatus = 1`);
-        res.status(200).json(Complaint);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Something went wrong" });
-    }
-};
-
-const getCompletedComplaint = async (req, res) => {
-    try {
-        var [Complaint] = await pool.query(`SELECT * FROM tbl_complaint where CreatedBy = ${req.userId} AND CompStatus = 0`);
-        res.status(200).json(Complaint);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Something went wrong" });
-    }
-};
-
 const getallComplaint = async (req, res) => {
     try {
         var [Complaints] = await pool.query(`SELECT * FROM tbl_emergencycomplaint`);
@@ -100,8 +88,6 @@ module.exports = {
     createComplaint,
     updateComplaint,
     deleteComplaint,
-    getComplaint,
     getallComplaint,
-    getPendingComplaint,
-    getCompletedComplaint
+    updateStatusComplaint
 };

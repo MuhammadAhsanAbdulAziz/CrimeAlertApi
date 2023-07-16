@@ -19,7 +19,7 @@ const signup = async (req, res) => {
     // user creation
     // token generate
 
-    const { FName, LName, CNIC, Email, Password, RoleId } = req.body;
+    const { FName, LName, CNIC, Email, Password, RoleId} = req.body;
     try {
 
         const [existingUserEmail] = await pool.query(`SELECT * FROM tbl_user WHERE Email = ?`, [Email])
@@ -67,6 +67,16 @@ const getUser = async (req, res) => {
     try {
         var [User] = await pool.query(`SELECT * FROM tbl_user WHERE UserId = ?`, [req.userId]);
         User = User[0]
+        res.status(200).json(User);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+};
+
+const getallUser = async (req, res) => {
+    try {
+        var [User] = await pool.query(`SELECT * FROM tbl_user`);
         res.status(200).json(User);
     } catch (error) {
         console.log(error);
@@ -126,6 +136,25 @@ const updateUser = async (req, res) => {
 
 };
 
+const updateRoleUser = async (req, res) => {
+    const id = req.params.id;
+    const {RoleId } = req.body;
+
+    try {
+            await pool.query(`UPDATE tbl_user SET RoleId = ? where UserId = ?`,
+                [RoleId, id])
+            var [user] = await pool.query(`SELECT * FROM tbl_user WHERE UserId = ?`, [id])
+            user = user[0]
+            res.status(200).json(user);
+        
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+
+};
+
 const deleteUser = async (req, res) => {
     const id = req.params.id;
 
@@ -138,4 +167,4 @@ const deleteUser = async (req, res) => {
     }
 
 };
-module.exports = { signin, signup, getUser, updateUser, deleteUser };
+module.exports = { signin, signup, getUser, updateUser, deleteUser,getallUser,updateRoleUser };
